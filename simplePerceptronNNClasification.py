@@ -1,4 +1,4 @@
-## Simple Layer Perceptron Network - Regression Problem
+## Simple Layer Perceptron Network - Classification Problem
 # Created by: Vinicius Amorim Santos 
 # Date: 27/03/2025
 # Version: 1.0.0
@@ -15,18 +15,24 @@ class Perceptron():
         self.bias = np.random.random(1) # Bias
         self.error = 0
 
+    def step(self, X):
+        if X >= 0:
+            return int(1)
+        else:
+            return int(0)
+
     def fit(self, X, y):
         for i in range(self.epochs):
-            print(f'Weight: {self.weights} Bias: {self.bias} Error: {self.error} epoch: {i}')
+            print(f'Weight: {self.weights} Bias: {self.bias} epoch: {i}')
             for xi, target in zip(X, y):
-                output = np.dot(xi, self.weights) + self.bias
+                output = self.step(np.dot(xi, self.weights) - self.bias)
                 self.error = (target - output)
+                print(f'y: {target} output: {output} Error: {self.error}')
                 self.weights = self.weights + self.lr * (self.error) * xi
                 self.bias = self.bias + self.lr * self.error
 
 
     def predict(self,X):
-        
         Predict = np.dot(X, self.weights) + self.bias
         
         return Predict
@@ -34,17 +40,29 @@ class Perceptron():
 
 # Data
 
-X = np.array([1, 2, 3, 4, 5])
-y = np.array([3, 5, 7, 9, 11])
+X = np.array([[4, 1],
+              [5, 4],
+              [3, 1],
+              [-3, 1],
+              [0, -2],
+              [1, 0]])
+
+y = np.array([1, 1, 1, 0, 0, 0])
 
 # Train
 
 print('Treino Perceptron:')
-perceptron = Perceptron(1, 0.1, 10)
+perceptron = Perceptron(2, 0.1, 10)
 perceptron.fit(X, y) 
 
-print(perceptron.predict(7))
 
-plt.plot(X, X * perceptron.weights + perceptron.bias)
-plt.scatter(X, y, color='r')
+x1 = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+x2 = -(perceptron.weights[0]/perceptron.weights[1])*x1 - perceptron.bias
+
+fig, ax = plt.subplot()
+ax.scatter(X[:3,0], X[:3,1], color='r')
+ax.scatter(X[3:,0], X[3:,1], color='b')
+ax.plot(x1, x2)
+ax.xlim(-6, 6)
+ax.ylim(-2, 6)
 plt.show()
